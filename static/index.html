@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryde Dispute Resolution Agent</title>
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --surface: #131826;
+            --surface2: #1a2030;
+            --border: #252d3f;
+            --primary: #4f7cff;
+            --primary-dim: #3a5fde;
+            --accent: #00d4aa;
+            --warn: #ffb547;
+            --danger: #ff4757;
+            --text: #e4e7f0;
+            --text-dim: #8892a6;
+            --radius: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        /* --- Header --- */
+        .header {
+            background: linear-gradient(135deg, #131826 0%, #1a2030 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 14px; }
+        .logo {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 800; color: #fff;
+        }
+        .header h1 { font-size: 18px; font-weight: 700; }
+        .header p { font-size: 12px; color: var(--text-dim); }
+        .header-right { display: flex; gap: 8px; }
+        .status-badge {
+            background: rgba(0,212,170,0.15); color: var(--accent);
+            border: 1px solid rgba(0,212,170,0.3);
+            padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+        .status-badge.offline {
+            background: rgba(255,71,87,0.15); color: var(--danger);
+            border-color: rgba(255,71,87,0.3);
+        }
+        /* --- Layout --- */
+        .container {
+            max-width: 1200px; margin: 0 auto; padding: 24px 32px;
+            display: grid; grid-template-columns: 380px 1fr; gap: 24px;
+        }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+        /* --- Cards --- */
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+        }
+        .card h2 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+        /* --- Form --- */
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 5px; font-weight: 600; }
+        input, select, textarea {
+            width: 100%; background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 13px;
+            transition: border 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        textarea { resize: vertical; min-height: 60px; }
+        /* --- Demo Case Buttons --- */
+        .demo-cases { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .demo-btn {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 8px 12px; color: var(--text-dim);
+            font-size: 12px; cursor: pointer; transition: all 0.2s;
+        }
+        .demo-btn:hover { border-color: var(--primary); color: var(--text); background: rgba(79,124,255,0.1); }
+        /* --- Submit Button --- */
+        .btn-primary {
+            width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+            border: none; border-radius: 8px; padding: 12px; color: #fff;
+            font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        /* --- Loading Spinner --- */
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+            border-radius: 50%; animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* --- Results Panel --- */
+        .results-panel { min-height: 600px; }
+        .empty-state {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 400px; color: var(--text-dim); text-align: center;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+        /* --- Result Header --- */
+        .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .result-header h2 { font-size: 16px; }
+        .route-badge {
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+        }
+        .route-auto { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+        .route-challenge { background: rgba(255,181,71,0.15); color: var(--warn); border: 1px solid rgba(255,181,71,0.3); }
+        .route-human { background: rgba(255,71,87,0.15); color: var(--danger); border: 1px solid rgba(255,71,87,0.3); }
+        /* --- Info Grid --- */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .info-item {
+            background: var(--surface2); border-radius: 8px; padding: 12px 14px;
+        }
+        .info-item .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-item .value { font-size: 14px; font-weight: 600; margin-top: 3px; }
+        .value.green { color: var(--accent); }
+        .value.red { color: var(--danger); }
+        .value.warn { color: var(--warn); }
+        /* --- Pipeline Stages --- */
+        .stages { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+        .stage {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--surface2); border-radius: 8px; padding: 10px 14px;
+            font-size: 13px;
+        }
+        .stage-dot {
+            width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
+            box-shadow: 0 0 8px rgba(0,212,170,0.4); flex-shrink: 0;
+        }
+        .stage-name { flex: 1; }
+        .stage-status { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+        /* --- Agent Arguments --- */
+        .agent-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        @media (max-width: 700px) { .agent-grid { grid-template-columns: 1fr; } }
+        .agent-card {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px;
+        }
+        .agent-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .agent-card .role-icon { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .agent-card .role-rider { background: rgba(79,124,255,0.2); color: var(--primary); }
+        .agent-card .role-driver { background: rgba(255,181,71,0.2); color: var(--warn); }
+        .agent-card .role-judge { background: rgba(0,212,170,0.2); color: var(--accent); }
+        .agent-card .row { font-size: 12px; margin-bottom: 6px; }
+        .agent-card .row .k { color: var(--text-dim); }
+        .agent-card .row .v { font-weight: 600; }
+        .agent-card .policies { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+        .policy-chip { background: rgba(79,124,255,0.15); color: var(--primary); border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 600; }
+        /* --- Confidence Bar --- */
+        .confidence-section { margin-bottom: 20px; }
+        .confidence-bar {
+            height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; margin-top: 6px;
+        }
+        .confidence-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+        .confidence-fill.high { background: var(--accent); }
+        .confidence-fill.mid { background: var(--warn); }
+        .confidence-fill.low { background: var(--danger); }
+        .confidence-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+        .confidence-row .label { color: var(--text-dim); }
+        .confidence-row .value { font-weight: 600; }
+        /* --- Refund Box --- */
+        .refund-box {
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(79,124,255,0.1));
+            border: 1px solid rgba(0,212,170,0.3);
+            border-radius: 10px; padding: 16px; margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .refund-box .amount { font-size: 28px; font-weight: 800; color: var(--accent); }
+        .refund-box .details { text-align: right; }
+        .refund-box .details .label { font-size: 11px; color: var(--text-dim); }
+        .refund-box .details .val { font-size: 13px; font-weight: 600; }
+        /* --- Next Steps --- */
+        .next-steps {
+            background: var(--surface2); border-left: 3px solid var(--primary);
+            border-radius: 8px; padding: 14px 16px; font-size: 13px; line-height: 1.5;
+        }
+        /* --- Fade In --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <div class="logo">R</div>
+        <div>
+            <h1>Ryde Dispute Resolution Agent</h1>
+            <p>Multi-Agent Autonomous Dispute Resolution &middot; Tencent Cloud Hackathon 2026</p>
+        </div>
+    </div>
+    <div class="header-right">
+        <span class="status-badge" id="apiStatus">Connecting...</span>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Left: Input Panel -->
+    <div class="input-panel">
+        <div class="card">
+            <h2>Submit a Dispute</h2>
+
+            <div class="demo-cases">
+                <button class="demo-btn" onclick="loadDemoCase('disp002')">DISP-002 No-Show</button>
+                <button class="demo-btn" onclick="loadDemoCase('route_deviation')">Route Deviation</button>
+                <button class="demo-btn" onclick="loadDemoCase('cancellation_grace')">3-Min Grace</button>
+                <button class="demo-btn" onclick="loadDemoCase('cash_fee')">Cash Fee</button>
+                <button class="demo-btn" onclick="loadDemoCase('safety')">Safety Incident</button>
+            </div>
+
+            <div class="form-group">
+                <label>Dispute ID</label>
+                <input type="text" id="disputeId" value="DISP-TEST-001" placeholder="e.g. DISP-001">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="category">
+                    <option value="no_show_charge">No-Show Charge</option>
+                    <option value="route_deviation">Route Deviation</option>
+                    <option value="cancellation_fee">Cancellation Fee</option>
+                    <option value="waiting_fee">Waiting Fee</option>
+                    <option value="cleaning_fee">Cleaning Fee</option>
+                    <option value="fare_dispute">Fare Dispute</option>
+                    <option value="safety_incident">Safety Incident</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Filed By</label>
+                <select id="filedBy">
+                    <option value="rider">Rider</option>
+                    <option value="driver">Driver</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Rider ID</label>
+                    <input type="text" id="riderId" value="R-12345">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Driver ID</label>
+                    <input type="text" id="driverId" value="D-67890">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="description" placeholder="Describe the dispute...">Driver never showed up at the pickup point. I was charged a no-show fee of $6.61 but I was there on time.</textarea>
+            </div>
+
+            <button class="btn-primary" id="submitBtn" onclick="submitDispute()">
+                Submit &amp; Resolve
+            </button>
+        </div>
+
+        <div class="card">
+            <h2>Architecture (Vision 4)</h2>
+            <div style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">
+                <p><strong style="color:var(--text)">3 Core Agents:</strong></p>
+                <p>&bull; <strong>Rider Advocate</strong> — builds case for the rider</p>
+                <p>&bull; <strong>Driver Advocate</strong> — builds case for the driver</p>
+                <p>&bull; <strong>Judge Agent</strong> — evaluates both arguments</p>
+                <br>
+                <p><strong style="color:var(--text)">7 Pipeline Stages:</strong></p>
+                <p>1. Intake &amp; Triage</p>
+                <p>2. Evidence Collection</p>
+                <p>3. Advocate Assessment</p>
+                <p>4. Verification</p>
+                <p>5. Judge Ruling</p>
+                <p>6. Confidence &amp; Risk Routing</p>
+                <p>7. Final Decision</p>
+                <br>
+                <p><strong style="color:var(--text)">Policy Engine:</strong> 79 rules, 7 conflicts, 4 gaps</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Results Panel -->
+    <div class="results-panel">
+        <div class="card" id="resultsCard" style="display: none;">
+            <!-- Filled dynamically -->
+        </div>
+        <div class="card" id="emptyCard">
+            <div class="empty-state">
+                <div class="icon">&#9881;</div>
+                <p>Select a demo case or fill in the form, then click <strong>Submit &amp; Resolve</strong> to see the full dispute resolution pipeline in action.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = '';
+    let isProcessing = false;
+
+    // --- Check API health ---
+    async function checkHealth() {
+        try {
+            const res = await fetch(`${API_BASE}/health`);
+            const data = await res.json();
+            const badge = document.getElementById('apiStatus');
+            badge.textContent = `Online &middot; ${data.policy_engine.total_rules} rules`;
+            badge.classList.remove('offline');
+        } catch (e) {
+            const badge = document.getElementById('apiStatus');
+            badge.textContent = 'Offline';
+            badge.classList.add('offline');
+        }
+    }
+    checkHealth();
+
+    // --- Load demo case via API ---
+    async function loadDemoCase(caseName) {
+        if (isProcessing) return;
+        isProcessing = true;
+        showLoading('Running demo case...');
+
+        try {
+            const res = await fetch(`${API_BASE}/demo/${caseName}`, { method: 'POST' });
+            const data = await res.json();
+            renderResult(data);
+        } catch (e) {
+            showError('Failed to load demo case: ' + e.message);
+        } finally {
+            isProcessing = false;
+        }
+    }
+
+    // --- Submit custom dispute ---
+    async function submitDispute() {
+        if (isProcessing) return;
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> &nbsp;Resolving...';
+        isProcessing = true;
+
+        const body = {
+            dispute_id: document.getElementById('disputeId').value,
+            category: document.getElementById('category').value,
+            filed_by: document.getElementById('filedBy').value,
+            rider_id: document.getElementById('riderId').value,
+            driver_id: document.getElementById('driverId').value,
+            description: document.getElementById('description').value,
+            evidence: [],
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/dispute`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showError(data.detail || 'Request failed');
+            } else {
+                renderResult(data);
+            }
+        } catch (e) {
+            showError('Failed to submit: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Submit &amp; Resolve';
+            isProcessing = false;
+        }
+    }
+
+    // --- Loading state ---
+    function showLoading(msg) {
+        document.getElementById('emptyCard').style.display = 'none';
+        const card = document.getElementById('resultsCard');
+        card.style.display = 'block';
+        card.innerHTML = `<div class="empty-state"><div class="spinner" style="width:32px;height:32px;border-width:3px;border-color:rgba(79,124,255,0.2);border-top-color:var(--primary);"></div><p style="margin-top:16px;">${msg}</p></div>`;
+    }
+
+    function showError(msg) {
+        document.getElementById('emptyCard').style.display = 'none';
+        const card = document.getElementById('resultsCard');
+        card.style.display = 'block';
+        card.innerHTML = `<div class="empty-state"><div class="icon" style="color:var(--danger);opacity:0.5;">&#9888;</div><p style="color:var(--danger);">${msg}</p></div>`;
+    }
+
+    // --- Render result ---
+    function renderResult(data) {
+        document.getElementById('emptyCard').style.display = 'none';
+        const card = document.getElementById('resultsCard');
+        card.style.display = 'block';
+
+        const routeClass = data.route === 'auto_resolve' ? 'route-auto'
+            : data.route === 'challenge_window' ? 'route-challenge'
+            : 'route-human';
+        const routeLabel = data.route === 'auto_resolve' ? 'AUTO-RESOLVE'
+            : data.route === 'challenge_window' ? 'CHALLENGE WINDOW'
+            : 'HUMAN REVIEW';
+
+        const liabilityClass = data.liability_label === 'rider_fault' ? 'warn'
+            : data.liability_label === 'driver_fault' ? 'red'
+            : data.liability_label === 'no_fault' ? 'green' : '';
+
+        const decisionText = data.final_decision ? 'Final Decision' : 'Pending';
+        const decisionClass = data.final_decision ? 'green' : 'warn';
+
+        // Agent cards
+        const riderArg = data.rider_argument || {};
+        const driverArg = data.driver_argument || {};
+        const judgeRuling = data.judge_ruling || {};
+
+        function agentCard(title, iconClass, iconChar, arg) {
+            const policies = (arg.policy_ids || []).map(p => `<span class="policy-chip">${p}</span>`).join('');
+            const assessment = arg.assessment ? arg.assessment.replace(/_/g, ' ') : 'N/A';
+            const rationale = arg.rationale ? (arg.rationale.length > 120 ? arg.rationale.substring(0,120) + '...' : arg.rationale) : 'N/A';
+            return `
+                <div class="agent-card">
+                    <h3><span class="role-icon ${iconClass}">${iconChar}</span> ${title}</h3>
+                    <div class="row"><span class="k">Assessment:</span> <span class="v">${assessment}</span></div>
+                    <div class="row"><span class="k">Liability:</span> <span class="v">${arg.liability_label || 'N/A'}</span></div>
+                    <div class="row"><span class="k">Rationale:</span> <span class="v" style="font-size:11px;">${rationale}</span></div>
+                    ${policies ? `<div class="policies">${policies}</div>` : ''}
+                </div>`;
+        }
+
+        // Confidence bars
+        const cs = data.confidence_score || {};
+        function confBar(label, val) {
+            const pct = Math.round((val || 0) * 100);
+            const cls = pct >= 75 ? 'high' : pct >= 45 ? 'mid' : 'low';
+            return `
+                <div class="confidence-row">
+                    <span class="label">${label}</span>
+                    <span class="value">${pct}%</span>
+                </div>
+                <div class="confidence-bar"><div class="confidence-fill ${cls}" style="width:${pct}%"></div></div>`;
+        }
+
+        // Refund
+        let refundHtml = '';
+        if (data.refund && data.refund.amount_sgd !== undefined) {
+            refundHtml = `
+                <div class="refund-box">
+                    <div>
+                        <div style="font-size:11px;color:var(--text-dim);">Refund Amount</div>
+                        <div class="amount">$${data.refund.amount_sgd.toFixed(2)} SGD</div>
+                    </div>
+                    <div class="details">
+                        <div class="label">Policy</div>
+                        <div class="val">${data.refund.policy_id || 'N/A'}</div>
+                        ${data.refund.capped ? '<div class="label" style="margin-top:4px;">Capped</div>' : ''}
+                    </div>
+                </div>`;
+        }
+
+        // Stages
+        const stagesHtml = (data.stages || []).map(s => `
+            <div class="stage">
+                <div class="stage-dot"></div>
+                <span class="stage-name">${s.stage.replace(/_/g, ' ')}</span>
+                <span class="stage-status">${s.status}</span>
+            </div>`).join('');
+
+        card.innerHTML = `
+            <div class="fade-in">
+                <div class="result-header">
+                    <h2>Dispute ${data.dispute_id}</h2>
+                    <span class="route-badge ${routeClass}">${routeLabel}</span>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label">Category</div>
+                        <div class="value">${data.category.replace(/_/g, ' ')}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Assessment</div>
+                        <div class="value">${data.final_assessment.replace(/_/g, ' ')}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Liability</div>
+                        <div class="value ${liabilityClass}">${data.liability_label.replace(/_/g, ' ')}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">${data.final_decision ? 'Decision' : 'Status'}</div>
+                        <div class="value ${decisionClass}">${decisionText}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Human Review</div>
+                        <div class="value ${data.human_review_required ? 'red' : 'green'}">${data.human_review_required ? 'Required' : 'Not Required'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Evidence Items</div>
+                        <div class="value">${(data.stages && data.stages[1] && data.stages[1].details && data.stages[1].details.total) || 0}</div>
+                    </div>
+                </div>
+
+                ${refundHtml}
+
+                <div>
+                    <h2 style="font-size:14px;margin-bottom:12px;">Pipeline Stages</h2>
+                    <div class="stages">${stagesHtml}</div>
+                </div>
+
+                <div>
+                    <h2 style="font-size:14px;margin-bottom:12px;">Agent Arguments</h2>
+                    <div class="agent-grid">
+                        ${agentCard('Rider Advocate', 'role-rider', 'R', riderArg)}
+                        ${agentCard('Driver Advocate', 'role-driver', 'D', driverArg)}
+                        ${agentCard('Judge Agent', 'role-judge', 'J', judgeRuling)}
+                    </div>
+                </div>
+
+                <div class="confidence-section">
+                    <h2 style="font-size:14px;margin-bottom:12px;">Confidence Scores</h2>
+                    ${confBar('Policy Clarity', cs.policy_clarity)}
+                    ${confBar('Evidence Strength', cs.evidence_strength)}
+                    ${confBar('Historical Consistency', cs.historical_consistency)}
+                    ${confBar('Agent Consistency', cs.agent_consistency)}
+                    ${confBar('Claim Reliability', cs.claim_reliability)}
+                    <div style="margin-top:10px;padding:8px 12px;background:var(--surface2);border-radius:8px;display:flex;justify-content:space-between;">
+                        <span style="font-size:13px;font-weight:700;">Total Confidence</span>
+                        <span style="font-size:13px;font-weight:700;color:${(cs.total||0)>=0.75?'var(--accent)':(cs.total||0)>=0.45?'var(--warn)':'var(--danger)'};">${Math.round((cs.total||0)*100)}%</span>
+                    </div>
+                </div>
+
+                <div class="next-steps">
+                    <strong>Next Steps:</strong> ${data.next_step || 'N/A'}
+                </div>
+            </div>
+        `;
+    }
+</script>
+
+</body>
+</html>

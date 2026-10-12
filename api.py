@@ -8,6 +8,8 @@ Exposes endpoints for:
 - GET /health: Health check
 """
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import Optional, Any
 import sys
@@ -155,7 +157,9 @@ async def run_demo_case(case_name: str):
         "disp002": build_disp002_case,
         "route_deviation": build_route_deviation_case,
         "cancellation_grace": build_cancellation_grace_case,
+        "cash_fee": build_cash_processing_fee_case,
         "cash_processing_fee": build_cash_processing_fee_case,
+        "safety": build_safety_incident_case,
         "safety_incident": build_safety_incident_case,
     }
     if case_name not in demo_cases:
@@ -164,3 +168,13 @@ async def run_demo_case(case_name: str):
     result = _resolver.resolve(case)
     _results_store[case.dispute_id] = result.to_dict()
     return result.to_dict()
+
+
+# --- Serve UI ---
+_static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+app.mount("/static", StaticFiles(directory=_static_dir), name="static")
+
+
+@app.get("/")
+async def serve_ui():
+    return FileResponse(os.path.join(_static_dir, "index.html"))
