@@ -295,75 +295,64 @@
     </div>
 </div>
 
+<script src="policy_data.js"></script>
+<script src="engine.js"></script>
 <script>
-    const API_BASE = '';
     let isProcessing = false;
+    let policyEngine = null;
 
-    // --- Check API health ---
-    async function checkHealth() {
-        try {
-            const res = await fetch(`${API_BASE}/health`);
-            const data = await res.json();
-            const badge = document.getElementById('apiStatus');
-            badge.textContent = `Online &middot; ${data.policy_engine.total_rules} rules`;
-            badge.classList.remove('offline');
-        } catch (e) {
-            const badge = document.getElementById('apiStatus');
-            badge.textContent = 'Offline';
-            badge.classList.add('offline');
-        }
-    }
-    checkHealth();
+    // --- Initialize ---
+    (function init() {
+        policyEngine = new RydeApp.PolicyEngine();
+        const summary = policyEngine.summary();
+        const badge = document.getElementById('apiStatus');
+        badge.textContent = `Online \u00b7 ${summary.total_rules} rules`;
+        badge.classList.remove('offline');
+    })();
 
-    // --- Load demo case via API ---
-    async function loadDemoCase(caseName) {
+    // --- Load demo case locally ---
+    function loadDemoCase(caseName) {
         if (isProcessing) return;
         isProcessing = true;
         showLoading('Running demo case...');
 
         try {
-            const res = await fetch(`${API_BASE}/demo/${caseName}`, { method: 'POST' });
-            const data = await res.json();
-            renderResult(data);
+            const caseData = JSON.parse(JSON.stringify(RydeApp.DEMO_CASES[caseName]));
+            const result = RydeApp.resolveDispute(policyEngine, caseData);
+            renderResult(result);
         } catch (e) {
-            showError('Failed to load demo case: ' + e.message);
+            showError('Failed: ' + e.message);
         } finally {
             isProcessing = false;
         }
     }
 
-    // --- Submit custom dispute ---
-    async function submitDispute() {
+    // --- Submit custom dispute locally ---
+    function submitDispute() {
         if (isProcessing) return;
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span> &nbsp;Resolving...';
         isProcessing = true;
 
-        const body = {
-            dispute_id: document.getElementById('disputeId').value,
-            category: document.getElementById('category').value,
-            filed_by: document.getElementById('filedBy').value,
-            rider_id: document.getElementById('riderId').value,
-            driver_id: document.getElementById('driverId').value,
-            description: document.getElementById('description').value,
-            evidence: [],
-        };
-
         try {
-            const res = await fetch(`${API_BASE}/dispute`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                showError(data.detail || 'Request failed');
-            } else {
-                renderResult(data);
-            }
+            const caseData = {
+                dispute_id: document.getElementById('disputeId').value,
+                category: document.getElementById('category').value,
+                filed_by: document.getElementById('filedBy').value,
+                rider_id: document.getElementById('riderId').value,
+                driver_id: document.getElementById('driverId').value,
+                description: document.getElementById('description').value,
+                filed_at: new Date().toISOString(),
+                facts: {},
+                evidence: [],
+                prior_rejected_disputes: 0,
+                driver_rating: 0,
+            };
+            const result = RydeApp.resolveDispute(policyEngine, caseData);
+            renderResult(result);
         } catch (e) {
-            showError('Failed to submit: ' + e.message);
+            showError('Failed: ' + e.message);
         } finally {
             btn.disabled = false;
             btn.innerHTML = 'Submit &amp; Resolve';
