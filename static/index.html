@@ -185,6 +185,101 @@
         /* --- Fade In --- */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease; }
+        /* --- Auth Styles --- */
+        .auth-btn {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 7px 14px; color: var(--text-dim);
+            font-size: 12px; cursor: pointer; transition: all 0.2s; font-weight: 600;
+        }
+        .auth-btn:hover { border-color: var(--primary); color: var(--text); }
+        .auth-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .user-menu { display: none; align-items: center; gap: 10px; }
+        .user-menu.show { display: flex; }
+        .user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700; color: #fff;
+        }
+        .user-name { font-size: 13px; font-weight: 600; }
+        .user-role { font-size: 10px; color: var(--text-dim); }
+        .dropdown {
+            position: absolute; top: 60px; right: 32px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; padding: 8px; min-width: 180px;
+            display: none; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .dropdown.show { display: block; }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 6px; cursor: pointer;
+            font-size: 13px; color: var(--text-dim); transition: all 0.15s;
+        }
+        .dropdown-item:hover { background: var(--surface2); color: var(--text); }
+        .dropdown-item.danger:hover { color: var(--danger); }
+        .dropdown-divider { height: 1px; background: var(--border); margin: 4px 0; }
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            display: none; align-items: center; justify-content: center; z-index: 300;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px; width: 380px; max-width: 90vw;
+        }
+        .modal h2 { font-size: 20px; margin-bottom: 6px; }
+        .modal p { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+        .modal-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
+        .modal-tab {
+            padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+            color: var(--text-dim); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+        }
+        .modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .modal .btn-primary { margin-top: 8px; }
+        .modal-error { color: var(--danger); font-size: 12px; margin-top: 8px; min-height: 16px; }
+        /* --- Tab Navigation --- */
+        .tab-nav { display: flex; gap: 4px; margin-bottom: 20px; }
+        .tab-btn {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 8px 16px; color: var(--text-dim);
+            font-size: 13px; cursor: pointer; transition: all 0.2s; font-weight: 600;
+        }
+        .tab-btn:hover { border-color: var(--primary); color: var(--text); }
+        .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        /* --- History List --- */
+        .history-list { display: flex; flex-direction: column; gap: 8px; }
+        .history-item {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: all 0.2s;
+        }
+        .history-item:hover { border-color: var(--primary); }
+        .history-item .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .history-item .did { font-size: 14px; font-weight: 700; }
+        .history-item .cat { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+        .history-item .desc { font-size: 12px; color: var(--text-dim); }
+        .history-item .meta { display: flex; gap: 12px; margin-top: 6px; font-size: 11px; }
+        .history-item .meta span { color: var(--text-dim); }
+        .history-item .route-tag {
+            padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;
+        }
+        .bookmark-btn {
+            background: none; border: none; cursor: pointer; font-size: 16px; opacity: 0.5; transition: opacity 0.2s;
+        }
+        .bookmark-btn:hover { opacity: 1; }
+        .bookmark-btn.active { opacity: 1; }
+        /* --- Admin Table --- */
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .admin-table th { text-align: left; padding: 10px 12px; color: var(--text-dim); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        .admin-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+        .admin-table tr:hover td { background: var(--surface2); }
+        .admin-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+        .admin-badge.admin { background: rgba(255,71,87,0.15); color: var(--danger); }
+        .admin-badge.user { background: rgba(79,124,255,0.15); color: var(--primary); }
+        .delete-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--danger); font-size: 11px; cursor: pointer; }
+        .delete-btn:hover { background: rgba(255,71,87,0.1); border-color: var(--danger); }
     </style>
 </head>
 <body>
@@ -199,6 +294,67 @@
     </div>
     <div class="header-right">
         <span class="status-badge" id="apiStatus">Connecting...</span>
+        <div id="authButtons">
+            <button class="auth-btn" onclick="openModal('login')">Login</button>
+            <button class="auth-btn active" onclick="openModal('register')">Sign Up</button>
+        </div>
+        <div class="user-menu" id="userMenu">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div>
+                <div class="user-name" id="userName">User</div>
+                <div class="user-role" id="userRole">user</div>
+            </div>
+            <div class="dropdown" id="userDropdown">
+                <div class="dropdown-item" onclick="switchTab('resolve')">Submit Dispute</div>
+                <div class="dropdown-item" onclick="switchTab('history')">My History</div>
+                <div class="dropdown-item" onclick="switchTab('bookmarks')">My Bookmarks</div>
+                <div class="dropdown-item" id="adminTabLink" style="display:none;" onclick="switchTab('admin')">Admin Dashboard</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item danger" onclick="logout()">Logout</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+    <div class="modal">
+        <div class="modal-tabs">
+            <div class="modal-tab" id="tabLogin" onclick="switchModalTab('login')">Login</div>
+            <div class="modal-tab active" id="tabRegister" onclick="switchModalTab('register')">Sign Up</div>
+        </div>
+        <div id="loginForm">
+            <h2>Welcome Back</h2>
+            <p>Log in to track your disputes and bookmarks</p>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="loginUsername" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password">
+            </div>
+            <div class="modal-error" id="loginError"></div>
+            <button class="btn-primary" onclick="doLogin()">Login</button>
+        </div>
+        <div id="registerForm">
+            <h2>Create Account</h2>
+            <p>Sign up to save your dispute resolution history</p>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="regUsername" placeholder="Choose a username (min 3 chars)">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="regEmail" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="regPassword" placeholder="Choose a password (min 6 chars)">
+            </div>
+            <div class="modal-error" id="regError"></div>
+            <button class="btn-primary" onclick="doRegister()">Create Account</button>
+        </div>
     </div>
 </div>
 
@@ -283,13 +439,77 @@
 
     <!-- Right: Results Panel -->
     <div class="results-panel">
-        <div class="card" id="resultsCard" style="display: none;">
-            <!-- Filled dynamically -->
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" id="tabBtnResolve" onclick="switchTab('resolve')">Resolve</button>
+            <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')" style="display:none;">My History</button>
+            <button class="tab-btn" id="tabBtnBookmarks" onclick="switchTab('bookmarks')" style="display:none;">Bookmarks</button>
+            <button class="tab-btn" id="tabBtnAdmin" onclick="switchTab('admin')" style="display:none;">Admin</button>
         </div>
-        <div class="card" id="emptyCard">
-            <div class="empty-state">
-                <div class="icon">&#9881;</div>
-                <p>Select a demo case or fill in the form, then click <strong>Submit &amp; Resolve</strong> to see the full dispute resolution pipeline in action.</p>
+
+        <!-- Resolve Tab -->
+        <div class="tab-content active" id="tabResolve">
+            <div class="card" id="resultsCard" style="display: none;"></div>
+            <div class="card" id="emptyCard">
+                <div class="empty-state">
+                    <div class="icon">&#9881;</div>
+                    <p>Select a demo case or fill in the form, then click <strong>Submit &amp; Resolve</strong> to see the full dispute resolution pipeline in action.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div class="tab-content" id="tabHistory">
+            <div class="card">
+                <h2>My Dispute History</h2>
+                <div id="historyList" class="history-list">
+                    <div class="empty-state" style="height:200px;">
+                        <p style="color:var(--text-dim);">Login to view your dispute history.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookmarks Tab -->
+        <div class="tab-content" id="tabBookmarks">
+            <div class="card">
+                <h2>My Bookmarked Disputes</h2>
+                <div id="bookmarksList" class="history-list">
+                    <div class="empty-state" style="height:200px;">
+                        <p style="color:var(--text-dim);">No bookmarks yet. Click the bookmark icon on a dispute to save it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tab -->
+        <div class="tab-content" id="tabAdmin">
+            <div class="card">
+                <h2>Admin Dashboard</h2>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+                    <div class="info-item">
+                        <div class="label">Total Users</div>
+                        <div class="value" id="adminTotalUsers">0</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Total Disputes</div>
+                        <div class="value" id="adminTotalDisputes">0</div>
+                    </div>
+                </div>
+                <h2 style="font-size:14px;margin-bottom:12px;">All Users</h2>
+                <div style="overflow-x:auto;margin-bottom:24px;">
+                    <table class="admin-table" id="adminUsersTable">
+                        <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Created</th><th></th></tr></thead>
+                        <tbody id="adminUsersBody"></tbody>
+                    </table>
+                </div>
+                <h2 style="font-size:14px;margin-bottom:12px;">All Disputes</h2>
+                <div style="overflow-x:auto;">
+                    <table class="admin-table" id="adminDisputesTable">
+                        <thead><tr><th>Dispute ID</th><th>User</th><th>Category</th><th>Route</th><th>Liability</th><th>Date</th></tr></thead>
+                        <tbody id="adminDisputesBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -300,6 +520,22 @@
 <script>
     let isProcessing = false;
     let policyEngine = null;
+    let currentUser = null;
+    let authToken = null;
+
+    // --- API helper ---
+    const API_BASE = window.location.origin;
+
+    async function apiCall(method, path, body) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+        const opts = { method, headers };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(`${API_BASE}${path}`, opts);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Request failed');
+        return data;
+    }
 
     // --- Initialize ---
     (function init() {
@@ -308,18 +544,297 @@
         const badge = document.getElementById('apiStatus');
         badge.textContent = `Online \u00b7 ${summary.total_rules} rules`;
         badge.classList.remove('offline');
+
+        // Check for saved token
+        const saved = localStorage.getItem('ryde_auth');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                authToken = parsed.token;
+                currentUser = parsed.user;
+                showUserMenu();
+                checkAdminAccess();
+            } catch (e) {
+                localStorage.removeItem('ryde_auth');
+            }
+        }
+
+        // User dropdown toggle
+        document.getElementById('userMenu').addEventListener('click', (e) => {
+            if (e.target.closest('.user-menu') && !e.target.closest('.dropdown-item')) {
+                document.getElementById('userDropdown').classList.toggle('show');
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.user-menu')) {
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+        });
+
+        // Enter key on auth forms
+        document.getElementById('loginPassword').addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+        document.getElementById('regPassword').addEventListener('keydown', (e) => { if (e.key === 'Enter') doRegister(); });
     })();
 
-    // --- Load demo case locally ---
+    // --- Auth Modal ---
+    function openModal(tab) {
+        document.getElementById('authModal').classList.add('show');
+        switchModalTab(tab);
+    }
+    function closeModal() {
+        document.getElementById('authModal').classList.remove('show');
+    }
+    document.getElementById('authModal').addEventListener('click', (e) => {
+        if (e.target.id === 'authModal') closeModal();
+    });
+
+    function switchModalTab(tab) {
+        const loginTab = document.getElementById('tabLogin');
+        const regTab = document.getElementById('tabRegister');
+        const loginForm = document.getElementById('loginForm');
+        const regForm = document.getElementById('registerForm');
+        if (tab === 'login') {
+            loginTab.classList.add('active'); regTab.classList.remove('active');
+            loginForm.style.display = 'block'; regForm.style.display = 'none';
+        } else {
+            regTab.classList.add('active'); loginTab.classList.remove('active');
+            regForm.style.display = 'block'; loginForm.style.display = 'none';
+        }
+    }
+
+    async function doRegister() {
+        const username = document.getElementById('regUsername').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const errEl = document.getElementById('regError');
+        errEl.textContent = '';
+        if (!username || !email || !password) { errEl.textContent = 'Please fill all fields'; return; }
+        try {
+            const data = await apiCall('POST', '/auth/register', { username, email, password });
+            authToken = data.token;
+            currentUser = data.user;
+            localStorage.setItem('ryde_auth', JSON.stringify(data));
+            closeModal();
+            showUserMenu();
+            checkAdminAccess();
+            loadHistory();
+        } catch (e) {
+            errEl.textContent = e.message;
+        }
+    }
+
+    async function doLogin() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const errEl = document.getElementById('loginError');
+        errEl.textContent = '';
+        if (!username || !password) { errEl.textContent = 'Please fill all fields'; return; }
+        try {
+            const data = await apiCall('POST', '/auth/login', { username, password });
+            authToken = data.token;
+            currentUser = data.user;
+            localStorage.setItem('ryde_auth', JSON.stringify(data));
+            closeModal();
+            showUserMenu();
+            checkAdminAccess();
+            loadHistory();
+            loadBookmarks();
+        } catch (e) {
+            errEl.textContent = e.message;
+        }
+    }
+
+    function logout() {
+        authToken = null;
+        currentUser = null;
+        localStorage.removeItem('ryde_auth');
+        document.getElementById('userMenu').classList.remove('show');
+        document.getElementById('authButtons').style.display = 'flex';
+        document.getElementById('tabBtnHistory').style.display = 'none';
+        document.getElementById('tabBtnBookmarks').style.display = 'none';
+        document.getElementById('tabBtnAdmin').style.display = 'none';
+        switchTab('resolve');
+    }
+
+    function showUserMenu() {
+        document.getElementById('authButtons').style.display = 'none';
+        document.getElementById('userMenu').classList.add('show');
+        document.getElementById('userAvatar').textContent = currentUser.username[0].toUpperCase();
+        document.getElementById('userName').textContent = currentUser.username;
+        document.getElementById('userRole').textContent = currentUser.role;
+        document.getElementById('tabBtnHistory').style.display = 'inline-block';
+        document.getElementById('tabBtnBookmarks').style.display = 'inline-block';
+    }
+
+    function checkAdminAccess() {
+        if (currentUser && currentUser.role === 'admin') {
+            document.getElementById('tabBtnAdmin').style.display = 'inline-block';
+            document.getElementById('adminTabLink').style.display = 'flex';
+        }
+    }
+
+    // --- Tab Navigation ---
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        const btnId = `tabBtn${tab.charAt(0).toUpperCase() + tab.slice(1)}`;
+        const contentId = `tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`;
+        const btn = document.getElementById(btnId);
+        if (btn) btn.classList.add('active');
+        const content = document.getElementById(contentId);
+        if (content) content.classList.add('active');
+        document.getElementById('userDropdown').classList.remove('show');
+
+        if (tab === 'history') loadHistory();
+        else if (tab === 'bookmarks') loadBookmarks();
+        else if (tab === 'admin') loadAdminData();
+    }
+
+    // --- Dispute History ---
+    async function loadHistory() {
+        const listEl = document.getElementById('historyList');
+        listEl.innerHTML = '<div class="empty-state" style="height:100px;"><div class="spinner"></div><p>Loading...</p></div>';
+        try {
+            const data = await apiCall('GET', '/dispute/history');
+            if (!data.disputes || data.disputes.length === 0) {
+                listEl.innerHTML = '<div class="empty-state" style="height:200px;"><p style="color:var(--text-dim);">No disputes yet. Submit one to see it here!</p></div>';
+                return;
+            }
+            listEl.innerHTML = data.disputes.map(d => {
+                const r = d.result || {};
+                const routeClass = r.route === 'auto_resolve' ? 'route-auto' : r.route === 'challenge_window' ? 'route-challenge' : 'route-human';
+                const routeLabel = r.route === 'auto_resolve' ? 'AUTO' : r.route === 'challenge_window' ? 'CHALLENGE' : 'HUMAN';
+                return `
+                    <div class="history-item" onclick='renderHistoryResult(${JSON.stringify(d.result).replace(/'/g, "&#39;")})'>
+                        <div class="top">
+                            <span class="did">${d.dispute_id}</span>
+                            <span class="route-tag ${routeClass}">${routeLabel}</span>
+                        </div>
+                        <div class="cat">${d.category.replace(/_/g, ' ')} &middot; Filed by ${d.filed_by}</div>
+                        <div class="desc">${(d.description || '').substring(0, 100)}</div>
+                        <div class="meta">
+                            <span>Liability: ${r.liability_label || 'N/A'}</span>
+                            <span>${new Date(d.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        } catch (e) {
+            listEl.innerHTML = `<div class="empty-state" style="height:200px;"><p style="color:var(--danger);">${e.message}</p></div>`;
+        }
+    }
+
+    function renderHistoryResult(result) {
+        switchTab('resolve');
+        renderResult(result);
+    }
+
+    // --- Bookmarks ---
+    async function loadBookmarks() {
+        const listEl = document.getElementById('bookmarksList');
+        listEl.innerHTML = '<div class="empty-state" style="height:100px;"><div class="spinner"></div><p>Loading...</p></div>';
+        try {
+            const data = await apiCall('GET', '/dispute/bookmarks');
+            if (!data.bookmarks || data.bookmarks.length === 0) {
+                listEl.innerHTML = '<div class="empty-state" style="height:200px;"><p style="color:var(--text-dim);">No bookmarks yet.</p></div>';
+                return;
+            }
+            listEl.innerHTML = data.bookmarks.map(b => {
+                const r = b.result || {};
+                const routeClass = r.route === 'auto_resolve' ? 'route-auto' : r.route === 'challenge_window' ? 'route-challenge' : 'route-human';
+                const routeLabel = r.route === 'auto_resolve' ? 'AUTO' : r.route === 'challenge_window' ? 'CHALLENGE' : 'HUMAN';
+                return `
+                    <div class="history-item">
+                        <div class="top">
+                            <span class="did" style="cursor:pointer;" onclick='renderHistoryResult(${JSON.stringify(b.result).replace(/'/g, "&#39;")})'>${b.dispute_id}</span>
+                            <button class="delete-btn" onclick="removeBookmark('${b.dispute_id}')">Remove</button>
+                        </div>
+                        <div class="cat">${(b.category || 'N/A').replace(/_/g, ' ')}</div>
+                        <div class="meta">
+                            <span class="route-tag ${routeClass}">${routeLabel}</span>
+                            <span>${new Date(b.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        } catch (e) {
+            listEl.innerHTML = `<div class="empty-state" style="height:200px;"><p style="color:var(--danger);">${e.message}</p></div>`;
+        }
+    }
+
+    async function toggleBookmark(disputeId) {
+        if (!authToken) { openModal('login'); return; }
+        try {
+            const data = await apiCall('GET', '/dispute/bookmarks');
+            const existing = data.bookmarks.find(b => b.dispute_id === disputeId);
+            if (existing) {
+                await apiCall('DELETE', `/dispute/bookmark/${disputeId}`);
+            } else {
+                await apiCall('POST', `/dispute/bookmark/${disputeId}`);
+            }
+            loadBookmarks();
+        } catch (e) { console.error(e); }
+    }
+
+    async function removeBookmark(disputeId) {
+        try {
+            await apiCall('DELETE', `/dispute/bookmark/${disputeId}`);
+            loadBookmarks();
+        } catch (e) { console.error(e); }
+    }
+
+    // --- Admin ---
+    async function loadAdminData() {
+        try {
+            const [usersData, disputesData] = await Promise.all([
+                apiCall('GET', '/admin/users'),
+                apiCall('GET', '/admin/disputes'),
+            ]);
+            document.getElementById('adminTotalUsers').textContent = usersData.total;
+            document.getElementById('adminTotalDisputes').textContent = disputesData.total;
+
+            document.getElementById('adminUsersBody').innerHTML = usersData.users.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.username}</td>
+                    <td>${u.email}</td>
+                    <td><span class="admin-badge ${u.role}">${u.role}</span></td>
+                    <td>${new Date(u.created_at).toLocaleDateString()}</td>
+                    <td>${u.role !== 'admin' ? `<button class="delete-btn" onclick="adminDeleteUser(${u.id})">Delete</button>` : ''}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('adminDisputesBody').innerHTML = disputesData.disputes.map(d => {
+                const r = d.result || {};
+                return `
+                <tr>
+                    <td>${d.dispute_id}</td>
+                    <td>${d.username}</td>
+                    <td>${d.category.replace(/_/g, ' ')}</td>
+                    <td>${r.route || 'N/A'}</td>
+                    <td>${r.liability_label || 'N/A'}</td>
+                    <td>${new Date(d.created_at).toLocaleDateString()}</td>
+                </tr>`;
+            }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);">No disputes yet.</td></tr>';
+        } catch (e) { console.error(e); }
+    }
+
+    async function adminDeleteUser(userId) {
+        if (!confirm('Delete this user? This cannot be undone.')) return;
+        try {
+            await apiCall('DELETE', `/admin/users/${userId}`);
+            loadAdminData();
+        } catch (e) { alert(e.message); }
+    }
+
+    // --- Load demo case locally + save to DB if logged in ---
     function loadDemoCase(caseName) {
         if (isProcessing) return;
         isProcessing = true;
         showLoading('Running demo case...');
-
         try {
             const caseData = JSON.parse(JSON.stringify(RydeApp.DEMO_CASES[caseName]));
             const result = RydeApp.resolveDispute(policyEngine, caseData);
             renderResult(result);
+            saveToServer(caseData, result);
         } catch (e) {
             showError('Failed: ' + e.message);
         } finally {
@@ -327,14 +842,13 @@
         }
     }
 
-    // --- Submit custom dispute locally ---
+    // --- Submit custom dispute locally + save to DB if logged in ---
     function submitDispute() {
         if (isProcessing) return;
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span> &nbsp;Resolving...';
         isProcessing = true;
-
         try {
             const caseData = {
                 dispute_id: document.getElementById('disputeId').value,
@@ -351,6 +865,7 @@
             };
             const result = RydeApp.resolveDispute(policyEngine, caseData);
             renderResult(result);
+            saveToServer(caseData, result);
         } catch (e) {
             showError('Failed: ' + e.message);
         } finally {
@@ -358,6 +873,27 @@
             btn.innerHTML = 'Submit &amp; Resolve';
             isProcessing = false;
         }
+    }
+
+    // --- Save dispute to server if logged in ---
+    async function saveToServer(caseData, result) {
+        if (!authToken) return;
+        try {
+            await apiCall('POST', '/dispute', {
+                dispute_id: caseData.dispute_id,
+                trip_id: caseData.trip_id || '',
+                filed_by: caseData.filed_by,
+                category: caseData.category,
+                description: caseData.description,
+                filed_at: caseData.filed_at || '',
+                rider_id: caseData.rider_id || '',
+                driver_id: caseData.driver_id || '',
+                facts: caseData.facts || {},
+                evidence: caseData.evidence || [],
+                prior_rejected_disputes: caseData.prior_rejected_disputes || 0,
+                driver_rating: caseData.driver_rating || 0,
+            });
+        } catch (e) { /* Silent fail — dispute still resolved locally */ }
     }
 
     // --- Loading state ---
@@ -452,10 +988,15 @@
                 <span class="stage-status">${s.status}</span>
             </div>`).join('');
 
+        // Bookmark button
+        const bookmarkHtml = authToken
+            ? `<button class="bookmark-btn" id="bookmarkBtn" onclick="toggleBookmark('${data.dispute_id}')" title="Bookmark this dispute">&#9734;</button>`
+            : '';
+
         card.innerHTML = `
             <div class="fade-in">
                 <div class="result-header">
-                    <h2>Dispute ${data.dispute_id}</h2>
+                    <h2>Dispute ${data.dispute_id} ${bookmarkHtml}</h2>
                     <span class="route-badge ${routeClass}">${routeLabel}</span>
                 </div>
 
